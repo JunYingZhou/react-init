@@ -7,7 +7,8 @@ import autoprefixer from 'autoprefixer';
 import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineConfig(({ command, mode }) => {
-  const envDir = path.resolve(__dirname, `./env/${process.env.VITE_PROJECT}`); // 设置环境变量的目录
+  // const envDir = path.resolve(__dirname, `./env/${process.env.VITE_PROJECT}`); // 设置环境变量的目录
+  const envDir = process.cwd(); // 设置环境变量的目录
   const envPrefix = 'VITE_'; // 设置环境变量的前缀，暴露import.meta.env.VITE_BASEURL使用
   const env = loadEnv(mode, envDir, envPrefix); // 获取环境变量
   const { VITE_BASEURL, VITE_CSS_PREFIX, VITE_PROJECT, VITE_PHONE } = env;
@@ -46,6 +47,7 @@ export default defineConfig(({ command, mode }) => {
           chunkFileNames: 'assets/js/[name]-[hash].js', // 设置打包时js文件名
           entryFileNames: 'assets/js/[name]-[hash].js', // 设置打包时入口文件名
           assetFileNames: 'assets/[ext]/[name]-[hash].[ext]', // 设置打包时静态资源文件名
+          // assetFileNames: 'assets/images/[name]-[hash].[ext]', // 设置打包时静态资源文件名
         },
       },
       chunkSizeWarningLimit: 1500, // 打包时超过1500kb的提示
@@ -54,6 +56,7 @@ export default defineConfig(({ command, mode }) => {
       assetsDir: './assets', // 设置打包输出静态资源目录
       assetsInlineLimit: 1024 * 1024, // 设置打包时静态资源小于1M时，打包成base64格式变成内联样式，只要js加载出来，图片就会加载出来，0延迟
       reportCompressedSize: false, // 打包时是否生成打包体积报告，提升构建速度
+      emptyOutDir: true, // 打包时是否清空打包目录
     },
     preview: {
       outDir: outDir, // 设置预览输出目录
@@ -72,20 +75,20 @@ export default defineConfig(({ command, mode }) => {
         plugins: [
           ...(VITE_PHONE === 'true'
             ? [
-                postcsspxtoviewport({
-                  unitToConvert: 'px', // 要转化的单位
-                  viewportWidth: 375, // UI设计稿的宽度，pc=1920，phone=375
-                  unitPrecision: 6, // 转换后的精度，即小数点位数
-                  propList: ['*'], // 指定转换的css属性的单位，*代表全部css属性的单位都进行转换
-                  viewportUnit: 'vw', // 指定需要转换成的视窗单位，默认vw
-                  fontViewportUnit: 'vw', // 指定字体需要转换成的视窗单位，默认vw
-                  selectorBlackList: ['ignore-'], // 指定不转换为视窗单位的类名，
-                  minPixelValue: 1, // 默认值1，小于或等于1px则不进行转换
-                  mediaQuery: true, // 是否在媒体查询的css代码中也进行转换，默认false
-                  replace: true, // 是否转换后直接更换属性值
-                  landscape: false, // 是否处理横屏情况
-                }),
-              ]
+              postcsspxtoviewport({
+                unitToConvert: 'px', // 要转化的单位
+                viewportWidth: 375, // UI设计稿的宽度，pc=1920，phone=375
+                unitPrecision: 6, // 转换后的精度，即小数点位数
+                propList: ['*'], // 指定转换的css属性的单位，*代表全部css属性的单位都进行转换
+                viewportUnit: 'vw', // 指定需要转换成的视窗单位，默认vw
+                fontViewportUnit: 'vw', // 指定字体需要转换成的视窗单位，默认vw
+                selectorBlackList: ['ignore-'], // 指定不转换为视窗单位的类名，
+                minPixelValue: 1, // 默认值1，小于或等于1px则不进行转换
+                mediaQuery: true, // 是否在媒体查询的css代码中也进行转换，默认false
+                replace: true, // 是否转换后直接更换属性值
+                landscape: false, // 是否处理横屏情况
+              }),
+            ]
             : []),
           tailwindcss, // 引入tailwindcss
           autoprefixer,

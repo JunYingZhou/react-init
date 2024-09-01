@@ -1,0 +1,5 @@
+.login-background {
+  /* background-color: red; */
+  background-image: url("@/assets/images/bmw.jpg");
+  background-size: cover;
+}
